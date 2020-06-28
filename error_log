@@ -1,0 +1,8 @@
+[25-Apr-2020 06:39:02 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:39:22 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:39:23 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:39:31 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:39:33 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:40:21 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:40:35 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
+[25-Apr-2020 06:40:38 UTC] PHP Fatal error:  Call to undefined method Sdh_model::get_barangays_digos() in /home/cp485896/public_html/stranded/application/modules/main/controllers/Main.php on line 23
