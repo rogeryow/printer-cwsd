@@ -19,7 +19,11 @@ input[type=search] {
 }
 
 .table td {
-	padding: .65rem;
+	padding: .55rem;
+}
+
+.table td:nth-child(3), .table td:nth-child(4) {
+	font-weight: 500;
 }
 
 .table tbody tr:hover {
@@ -106,17 +110,73 @@ input[type=search] {
 }
 
 .name {
-	position: relative;
-    font-size: 50px;
-    top: 410px;
-    left: 385px;
+	position: absolute;
+    font-size: 30px;
+    top: 171px;
+    left: 463px;
+    width: 500px;
 }
 
 .picture {
-    position: relative;
+    position: absolute;
 	top: 191px;
-    left: -205px;
+    left: 65px;
     width: 228px;
     height: 222px;
     object-fit: cover;
 }
+
+.toggle-zoom {
+	zoom: 35%;
+	margin-right: 30px;
+    margin-bottom: 37px;
+}
+
+/*loader start*/
+#loader {
+position: absolute;
+left: 50%;
+top: 50%;
+z-index: 1;
+width: 150px;
+height: 150px;
+margin: -75px 0 0 -75px;
+border: 16px solid #f3f3f3;
+border-radius: 50%;
+border-top: 16px solid #3498db;
+width: 120px;
+height: 120px;
+-webkit-animation: spin 2s linear infinite;
+animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+0% { -webkit-transform: rotate(0deg); }
+100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+position: relative;
+-webkit-animation-name: animatebottom;
+-webkit-animation-duration: 1s;
+animation-name: animatebottom;
+animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+from { bottom:-100px; opacity:0 } 
+to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+from{ bottom:-100px; opacity:0 } 
+to{ bottom:0; opacity:1 }
+}
+
+/*loader end*/

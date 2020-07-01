@@ -22,57 +22,6 @@ var table = $('#table-senior').DataTable({
         }   
     },
 
-    columnDefs: [
-        {
-            'targets': [0],
-            'searchable': false
-        },
-        {
-            targets: [1],
-            width: '50px',
-        },
-        {
-            targets: [2],
-            width: '20%',
-        },
-        {
-            'targets': [4],
-            'searchable': false
-        },
-        {
-            'targets': [5],
-            'searchable': false
-        },
-        {
-            'targets': [6],
-            'searchable': false
-        },
-        {
-            'targets': [7],
-            'searchable': false
-        },
-        {
-            'targets': [8],
-            'searchable': false
-        },
-        {
-            'targets': [9],
-            'searchable': false
-        },
-        {
-            'targets': [10],
-            'searchable': false
-        },
-        {
-            'targets': [11],
-            'searchable': false
-        },
-        {
-            'targets': [12],
-            'searchable': false
-        },
-    ],  
-
     dom: "<'row'<'col-sm-6 col-md-6'l><'col-sm-6 col-md-6'f>>" +
          "<'row'<'col-sm-12't>>" +
          "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
@@ -83,6 +32,7 @@ tableRowToArray()
 printId()
 
 function tableRowToArray() {
+    const printList = document.getElementById('print-list')
     const tableSenior = document.getElementById('table-senior')
         .getElementsByTagName('tbody')[0]
 
@@ -112,19 +62,86 @@ function tableRowToArray() {
                     picture:        getTableCellData(row, 12),
                     qr_code:        getTableCellData(row, 13),
                 }
-                users.push(profile)
 
+                users.push(profile)
+                generateId(profile)
+                writeToList(printList, {id: profile.id, name: (`${profile.family_name} ${profile.given_name}`)})
             }else {
                 const userIndex = users.findIndex((user) => user.id == id)
-                users.splice(userIndex)
+                users.splice(userIndex, 1)
+                removeFromList(printList, id)
             }
 
+            // users.sort(compareValues('family_name'))
             console.log(users)
 
         }
 
     })
 
+}
+
+function generateId(user) {
+    const templateHolder = document.getElementById('print-preview')
+
+        // <div class="print-page">
+    let seniorFrontTemplate = `
+        <div class="template-holder toggle-zoom">
+            <div class="template-front">
+                <img class="template-senior" src="support/sc_printer/img/template/front.jpg">
+                <div class="absolute">
+                    <span id="id-name" class="name">${user.given_name} ${user.family_name}</span>
+                    <img class="picture" src="support/sc_printer/img/profile/picture.jpg">
+                </div>
+            </div>
+        </div>
+    `
+
+    templateHolder.innerHTML += seniorFrontTemplate
+}
+
+function compareValues(key, order = 'asc') {
+    return function innerSort(a, b) {
+        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            return 0;
+        }
+
+        const varA = (typeof a[key] === 'string') ? a[key].toUpperCase() : a[key]
+        const varB = (typeof b[key] === 'string') ? b[key].toUpperCase() : b[key]
+
+        let comparison = 0
+
+        if (varA > varB) {
+            comparison = 1
+        } else if (varA < varB) {
+            comparison = -1
+        }
+
+        return (
+            (order === 'desc') ? (comparison * -1) : comparison
+        )
+    }
+}
+
+function writeToList(nodeList, data) {
+    const li = document.createElement('li')
+    li.appendChild(document.createTextNode(data.id + ' ' + data.name))
+    li.setAttribute('senior-id', data.id)
+    nodeList.appendChild(li)
+}
+
+function removeFromList(nodeList, id) {
+    const list = Array.from(nodeList.getElementsByTagName('li'))    
+    const found = list.find((listValue) => {
+        const currentId = listValue.getAttribute('senior-id')
+        
+        if(currentId == id) {
+            return listValue   
+        }
+
+    })
+
+    nodeList.removeChild(found)
 }
 
 function getTableCellData(row, index) {
@@ -153,74 +170,94 @@ function changeButton(button) {
 
 
 function printId() {
-    const btnPrint = document.getElementById('btn-print')
+    const btnPrintFront = document.getElementById('btn-print-front')
+    const btnPrintBack = document.getElementById('btn-print-back')
     const iframePrint = document.getElementById('iframe-print')
+    const templateBack = document.getElementById('template-back')
+
     const images = []
-
-    btnPrint.addEventListener('click', function() {
-        if(users.length > 0) {
-            
-                var node = document.getElementById('back')
-
-                function renderImage(value) {
-                    return new Promise((resolve) => {
-                        domtoimage.toJpeg(node).then(function (dataUrl) {
-                            resolve(dataUrl)
-                        })
-                    })
-                }
-
-                function startRendering() {
-                    let promises = []
-                    const a4Size =  [841.89, 595.28]
-                    const idSize = [247, 155.56]
-                    const doc = new jsPDF('l', 'pt', a4Size)
-                    const startX = idSize[0] + 20 
-                    const startY = idSize[1] + 20
-                    const startRow = idSize[1] + 20
-                    let col = 0
-                    let row = 0
-
-                    users.forEach((user, index) => {
-                        promises.push(renderImage(node))
-                    })
-
-                    Promise.all(promises).then((images) => {
-                    
-                        images.forEach((image, index) => {
-
-                            if(index == 9) {
-                                row = 0
-                                col = 0
-                                doc.addPage()
-                            }
-
-                            doc.addImage(images[index], 'JPEG', 
-                                (startX * row) + 10 ,
-                                (startRow * col) + 10, idSize[0], idSize[1]
-                            )
-
-                            row++
-
-                            if((index + 1) % 3 == 0) {
-                                row = 0
-                                col++
-                            }
-                            
-                        })
-
-                        docToIframe(doc, iframePrint)  
-
-                        $('#modal-print').modal('toggle')
-
-                    }).catch((error) => {
-                        console.log(error)
-                    })
-                }
     
-                startRendering()
-        }
+    btnPrintFront.addEventListener('click', function() {
+        const templateFronts = Array.from(document.getElementsByClassName('template-front'))
+        generateIds(templateFronts)                 
     })
+
+    btnPrintBack.addEventListener('click', function() {
+        generateIds(templateBack)                 
+    })
+
+    function generateIds(templates) {
+        if(users.length > 0) {
+            startRendering()
+
+            function renderImage(template) {
+                return new Promise((resolve) => {
+                    domtoimage.toJpeg(template).then(function (dataUrl) {
+                        resolve(dataUrl)
+                    })
+                })
+            }
+
+            function startRendering() {
+                load('start')
+
+                let promises = []
+                const a4Size =  [841.89, 595.28]
+                const idSize = [247, 155.56]
+                const doc = new jsPDF('l', 'pt', a4Size)
+                const startX = idSize[0] + 20 
+                const startY = idSize[1] + 20
+                const startRow = idSize[1] + 20
+                let col = 0
+                let row = 0
+                const margin = 35
+
+                templates.forEach((template) => {
+                    promises.push(renderImage(template))
+                })
+
+                Promise.all(promises).then((images) => {
+                    images.forEach((image, index) => {
+
+                        if(index == 9) {
+                            row = 0
+                            col = 0
+                            doc.addPage()
+                        }
+
+                        doc.addImage(images[index], 'JPEG', 
+                            (startX * row) + margin ,
+                            (startRow * col) + margin, idSize[0], idSize[1]
+                        )
+
+                        row++
+
+                        if((index + 1) % 3 == 0) {
+                            row = 0
+                            col++
+                        }
+                        
+                    })
+
+                    docToIframe(doc, iframePrint)  
+                    $('#modal-print').modal('toggle')
+                    load('stop')
+                })
+            }
+        }
+    }
+}
+
+function load(state) {
+    if(state == 'start') {
+        const loader = document.createElement('div')
+        loader.setAttribute('id', 'loader')
+        document.body.append(loader)
+    }else if(state == 'stop') {
+        const loader = document.getElementById('loader')
+        console.log(loader)
+        document.body.removeChild(loader)
+    }
 }
 
 function renderImage(node) {

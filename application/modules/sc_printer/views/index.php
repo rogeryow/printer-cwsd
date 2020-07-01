@@ -42,22 +42,18 @@
 						<div class="col-md-4">
 							<span>underconstruction</span>
 							<br>
-							<span>total: 0</span>'
+							<span>total: 0</span>
 							<br>
-							<ul>
-								<li>Roger Pantil</li>
-								<li>Naruto Uzumaki</li>
-							</ul>
+							<ul id="print-list"></ul>
 							<br>
-							<button id="btn-print">Print Fron</button>
-							<button id="btn-print">Print Back</button>
+							<button id="btn-print-front">Print Fron</button>
+							<button id="btn-print-back">Print Back</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>	
 	</div>
-
 
 	<div class="row">
 		<div class="col-md-12">
@@ -66,22 +62,14 @@
 
 				<div class="card-body">
 					<div class="row">
-						<div class="print-preview">
+						<div id="print-preview" class="print-preview">
 							<!-- template -->
-							<div class="print-page">
-								<div id="sample" class="template-holder">
-									<img class="template-senior" src="support/sc_printer/img/template/front.jpg">
-									<div class="absolute">
-										<span class="name">Roger Pantil</span>
-										<img class="picture" src="support/sc_printer/img/profile/picture.jpg">
-									</div>
-								</div>
-							</div>
+								
 							<!-- template -->
-							<div>
-								<img id="back" class="template-back" src="support/sc_printer/img/template/back.jpg">
-							</div>
 						</div>
+							<div>
+								<img id="template-back" class="template-back" src="support/sc_printer/img/template/back.jpg">
+							</div>
 					</div>
 				</div>
 
