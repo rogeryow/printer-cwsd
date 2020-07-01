@@ -64,12 +64,14 @@ function tableRowToArray() {
                 }
 
                 users.push(profile)
-                generateId(profile)
+                generateFrontId(profile)
+                generateBackId(profile)
                 writeToList(printList, {id: profile.id, name: (`${profile.family_name} ${profile.given_name}`)})
             }else {
                 const userIndex = users.findIndex((user) => user.id == id)
                 users.splice(userIndex, 1)
                 removeFromList(printList, id)
+                removeTemplate(id)
             }
 
             // users.sort(compareValues('family_name'))
@@ -81,16 +83,27 @@ function tableRowToArray() {
 
 }
 
-function generateId(user) {
+function removeTemplate(id) {
+    const templates = Array.from(document.querySelectorAll(`[sc-id='${id}']`))
+    templates.forEach((template) => {
+        template.remove()
+    })
+}
+
+function generateFrontId(user) {
     const templateHolder = document.getElementById('print-preview')
 
         // <div class="print-page">
     let seniorFrontTemplate = `
-        <div class="template-holder toggle-zoom">
+        <div sc-id="${user.id}" class="template-holder toggle-zoom">
             <div class="template-front">
                 <img class="template-senior" src="support/sc_printer/img/template/front.jpg">
                 <div class="absolute">
                     <span id="id-name" class="name">${user.given_name} ${user.family_name}</span>
+                    <span id="id-address">${user.barangay}, ${user.purok}</span>
+                    <span id="id-gender">${user.gender}</span>
+                    <span id="id-dob">${user.date_of_birth}</span>
+                    <span id="id-control">${user.sc_id}</span>
                     <img class="picture" src="support/sc_printer/img/profile/picture.jpg">
                 </div>
             </div>
@@ -98,6 +111,18 @@ function generateId(user) {
     `
 
     templateHolder.innerHTML += seniorFrontTemplate
+}
+
+function generateBackId(user) {
+    const templateHolder = document.getElementById('print-preview-back')
+
+    let seniorBackTemplate = `
+        <div sc-id="${user.id}" class="template-back-holder toggle-zoom">
+            <img id="template-back" class="template-back" src="support/sc_printer/img/template/back.jpg">
+        </div>
+    `
+
+    templateHolder.innerHTML += seniorBackTemplate
 }
 
 function compareValues(key, order = 'asc') {
@@ -168,7 +193,6 @@ function changeButton(button) {
     }
 }
 
-
 function printId() {
     const btnPrintFront = document.getElementById('btn-print-front')
     const btnPrintBack = document.getElementById('btn-print-back')
@@ -183,7 +207,8 @@ function printId() {
     })
 
     btnPrintBack.addEventListener('click', function() {
-        generateIds(templateBack)                 
+        const templateBacks = Array.from(document.getElementsByClassName('template-back'))
+        generateIds(templateBacks)                 
     })
 
     function generateIds(templates) {
@@ -193,6 +218,7 @@ function printId() {
             function renderImage(template) {
                 return new Promise((resolve) => {
                     domtoimage.toJpeg(template).then(function (dataUrl) {
+                        template.classList.toggle('flipped')
                         resolve(dataUrl)
                     })
                 })
@@ -213,6 +239,8 @@ function printId() {
                 const margin = 35
 
                 templates.forEach((template) => {
+                    console.log(template)
+                    template.classList.toggle('flipped')
                     promises.push(renderImage(template))
                 })
 

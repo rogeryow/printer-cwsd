@@ -67,9 +67,10 @@
 								
 							<!-- template -->
 						</div>
-							<div>
-								<img id="template-back" class="template-back" src="support/sc_printer/img/template/back.jpg">
-							</div>
+
+						<div id="print-preview-back">
+							
+						</div>
 					</div>
 				</div>
 
