@@ -66,12 +66,17 @@ function tableRowToArray() {
                 users.push(profile)
                 generateFrontId(profile)
                 generateBackId(profile)
-                writeToList(printList, {id: profile.id, name: (`${profile.family_name} ${profile.given_name}`)})
+                writeToList(printList, {
+                    id: profile.id, 
+                    name: (`${profile.family_name} ${profile.given_name}`)
+                })
+                setCounter()
             }else {
                 const userIndex = users.findIndex((user) => user.id == id)
                 users.splice(userIndex, 1)
                 removeFromList(printList, id)
                 removeTemplate(id)
+                setCounter()
             }
 
             // users.sort(compareValues('family_name'))
@@ -169,6 +174,11 @@ function removeFromList(nodeList, id) {
     nodeList.removeChild(found)
 }
 
+function setCounter() {
+    const counter = document.getElementById('counter')
+    counter.innerHTML = `TOTAL: ${users.length}`
+}
+
 function getTableCellData(row, index) {
     return row.getElementsByTagName('td')[index].textContent
 }
@@ -203,15 +213,15 @@ function printId() {
     
     btnPrintFront.addEventListener('click', function() {
         const templateFronts = Array.from(document.getElementsByClassName('template-front'))
-        generateIds(templateFronts)                 
+        generateIds(templateFronts, 'front')                 
     })
 
     btnPrintBack.addEventListener('click', function() {
         const templateBacks = Array.from(document.getElementsByClassName('template-back'))
-        generateIds(templateBacks)                 
+        generateIds(templateBacks, 'back')                 
     })
 
-    function generateIds(templates) {
+    function generateIds(templates, side) {
         if(users.length > 0) {
             startRendering()
 
@@ -225,7 +235,6 @@ function printId() {
             }
 
             function startRendering() {
-                load('start')
 
                 let promises = []
                 const a4Size =  [841.89, 595.28]
@@ -237,14 +246,22 @@ function printId() {
                 let col = 0
                 let row = 0
                 const margin = 35
+                const topMargin = 20
 
                 templates.forEach((template) => {
-                    console.log(template)
                     template.classList.toggle('flipped')
                     promises.push(renderImage(template))
                 })
 
                 Promise.all(promises).then((images) => {
+                    const today = new Date()
+                    const date = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()} `
+                    const time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`
+                    let batch = 1 
+                    let title = `${date} ${time} batch: ${batch}`
+
+                    doc.text(35, 35, title)
+
                     images.forEach((image, index) => {
 
                         if(index == 9) {
@@ -253,10 +270,21 @@ function printId() {
                             doc.addPage()
                         }
 
-                        doc.addImage(images[index], 'JPEG', 
-                            (startX * row) + margin ,
-                            (startRow * col) + margin, idSize[0], idSize[1]
-                        )
+                        if(side == 'front') {
+                            console.log('front')
+                            doc.addImage(images[index], 'JPEG', 
+                                (startX * row) + margin ,
+                                (startRow * col) + margin + topMargin, idSize[0], idSize[1]
+                            )
+                        }
+
+                        if(side == 'back') {
+                            console.log('back')
+                            doc.addImage(images[index], 'JPEG', 
+                                (569 - ((idSize[0] + 20) * row)),
+                                (startRow * col) + margin + topMargin, idSize[0], idSize[1]
+                            )
+                        }
 
                         row++
 
@@ -269,22 +297,9 @@ function printId() {
 
                     docToIframe(doc, iframePrint)  
                     $('#modal-print').modal('toggle')
-                    load('stop')
                 })
             }
         }
-    }
-}
-
-function load(state) {
-    if(state == 'start') {
-        const loader = document.createElement('div')
-        loader.setAttribute('id', 'loader')
-        document.body.append(loader)
-    }else if(state == 'stop') {
-        const loader = document.getElementById('loader')
-        console.log(loader)
-        document.body.removeChild(loader)
     }
 }
 
@@ -293,13 +308,6 @@ function renderImage(node) {
         return dataUrl
     })
 }
-
-// function normalizeTemplates() {
-//     const templates = Array.from(document.getElementsByClassName('template-senior'))
-//     templates.forEach((template) => {
-//         template.style.width = '247px'
-//     })
-// }
 
 function docToIframe(doc, iframe) {
     const blob = doc.output('blob')

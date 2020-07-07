@@ -42,12 +42,10 @@
 						<div class="col-md-4">
 							<span>underconstruction</span>
 							<br>
-							<span>total: 0</span>
+							<span id="counter">total: 0</span>
 							<br>
 							<ul id="print-list"></ul>
 							<br>
-							<button id="btn-print-front">Print Fron</button>
-							<button id="btn-print-back">Print Back</button>
 						</div>
 					</div>
 				</div>
@@ -61,6 +59,13 @@
 				<div class="card-header"><h5 class="card-title">Preview</h5></div>
 
 				<div class="card-body">
+					<div class="row">
+						<div>
+							<button id="btn-print-front">Print Fron</button>
+							<button id="btn-print-back">Print Back</button>
+						</div>
+					</div>
+
 					<div class="row">
 						<div id="print-preview" class="print-preview">
 							<!-- template -->
